@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>House Price Prediction</title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <h1>House Price Prediction</h1>
+        <form action="/predict" method="post">
+            <div>
+                <label for="bedrooms">Number of Bedrooms:</label>
+                <input type="text" id="bedrooms" name="bedrooms" required>
+            </div>
+            <div>
+                <label for="sqft">Square Footage:</label>
+                <input type="text" id="sqft" name="sqft" required>
+            </div>
+            <div>
+                <label for="ppsqft">Price per SqFt:</label>
+                <input type="text" id="ppsqft" name="ppsqft" required>
+            </div>
+            <div>
+                <label for="wr">Number of Washrooms:</label>
+                <input type="text" id="wr" name="wr" required>
+            </div>
+            <div>
+                <label for="year">Year Built:</label>
+                <input type="text" id="year" name="year" required>
+            </div>
+            <div>
+                <label for="age">Age of Property:</label>
+                <input type="text" id="age" name="age" required>
+            </div>
+            <div>
+                <label for="primerate">Prime Rate:</label>
+                <input type="text" id="primerate" name="primerate" required>
+            </div>
+            <div>
+                <label for="city">City Category (0 for non-Halton, 1 for Halton):</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <div>
+                <label for="type">Type Category:</label>
+                <input type="text" id="type" name="type" required>
+            </div>
+            <div>
+                <label for="walkscore">Walk Score:</label>
+                <input type="text" id="walkscore" name="walkscore" required>
+            </div>
+            <button type="submit">Predict</button>
+        </form>
+        <h2>{{ prediction_text }}</h2>
+    </div>
+</body>
+</html>
