@@ -7,6 +7,7 @@ This repository contains a machine learning model for predicting house prices in
 - Trains multiple machine learning models and selects the best performing one (Random Forest).
 - A web tool that allows users to input features and estimate house prices.
 - Utilizes Flask for the web interface.
+-Features for the home include Home Type, Number of Beds, Number of Washrooms, Square Feet, Prime Rate and walk score 
 
 ## Installation Instructions
 
