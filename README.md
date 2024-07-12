@@ -28,3 +28,4 @@ pip install Flask numpy pandas joblib scikit-learn
 python ml.py
 ```
 
+![Example](https://github.com/Y-Roman/HousePricePredictionModel/tree/master/images/sampleUI.jpg?raw=true)
