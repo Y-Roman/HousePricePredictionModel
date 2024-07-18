@@ -49,9 +49,9 @@
             <div class="form-group">
                 <label for="region">Select Region:</label>
                 <select id="region" name="region" class="form-control" required>
-                    <option value="">Select Region</option>
                     <option value="halton">Halton Region</option>
                     <option value="peel">Peel Region</option>
+					<option value="toronto">Toronto Region</option>
                 </select>
             </div>
             <div class="text-center">
@@ -70,6 +70,8 @@
                 window.location.href = '/halton_index';
             } else if (region === 'peel') {
                 window.location.href = '/peel_index';
+            } else if (region === 'toronto') {
+                window.location.href = '/toronto_index';
             }
         });
     </script>

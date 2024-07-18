@@ -13,11 +13,13 @@ def load_dataframe(file_name):
 # Load the DataFrames
 df_peel = load_dataframe('Peel2024.xlsx')
 df_halton = load_dataframe('Halton.xlsx')
+df_toronto = load_dataframe('Toronto2024.xlsx')
 app = Flask(__name__)
 
 # Load the Models for different datasets
 halton_model = load('Models/Halton_RFM.pkl')
 peel_model = load('Models/Peel_RFM.pkl')
+toronto_model = load('Models/Toronto_RFM.pkl')
 
 # Define the home page route
 @app.route('/')
@@ -31,6 +33,10 @@ def halton_index():
 @app.route('/peel_index')
 def peel_index():
     return render_template('peel_index.html')
+
+@app.route('/toronto_index')
+def toronto_index():
+    return render_template('toronto_index.html')
     
 # Define the prediction route for Halton Region
 @app.route('/predict_halton', methods=['POST'])
@@ -74,12 +80,12 @@ def predict_halton():
     features_halton = ['Total Bedrooms', 'SqFt Numeric', 'WR', 'Age Numeric', 'City Category', 'Type Category']
     input_features = np.array([bedrooms, sqft, wr, age, city, type_category]).reshape(1, -1)
     
-    # Filter df_peel to include only homes in the same City Category as the input
+    # Filter df_halton to include only homes in the same City Category as the input
     df_halton_filtered = df_halton[df_halton['City Category'] == city]
     df_halton_filtered['distance'] = df_halton_filtered[features_halton].apply(lambda row: distance.euclidean(row, input_features[0]), axis=1)
-    similar_homes = df_halton_filtered.nsmallest(3, 'distance')[['Address', 'Total Bedrooms', 'SqFt Numeric', 'WR', 'Age Numeric', 'city', 'Type', 'Sold Price']]
+    similar_homes = df_halton_filtered.nsmallest(3, 'distance')[['Address', 'Total Bedrooms', 'SqFt Numeric', 'WR', 'Age Numeric', 'city', 'Type', 'Sold Price', 'Sold Date']]
     
-    similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price']
+    similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price', 'Sold Date']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
     
     return render_template('halton_index.html', prediction_text='Estimated House Price for Halton Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
@@ -95,7 +101,7 @@ def predict_peel():
     city = float(request.form['city'])
     type_category = float(request.form['type'])
     
-    # Create a DataFrame from the input data (excluding Prime Rate and Walk Score)
+    # Create a DataFrame from the input data
     input_data_peel = pd.DataFrame({
         'Bedrooms Total': [bedrooms],
         'SqFt Numeric': [sqft],
@@ -119,7 +125,45 @@ def predict_peel():
     similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
     return render_template('peel_index.html', prediction_text='Estimated House Price for Peel Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+
+# Define the prediction route for Toronto Region
+@app.route('/predict_toronto', methods=['POST'])
+def predict_toronto():
+    # Get the input features from the form and convert to float
+    bedrooms = float(request.form['bedrooms'])
+    sqft = float(request.form['sqft'])
+    wr = float(request.form['wr'])
+    age = float(request.form['age'])
+    type_category = float(request.form['type'])
+    family_room = float(request.form['family room'])
+    garage_type = float(request.form['garage type'])
+    garage_parking_space = float(request.form['garage parking spaces'])
     
+    # Create a DataFrame from the input data
+    input_data_toronto = pd.DataFrame({
+        'Bedrooms Total': [bedrooms],
+        'SqFt Numeric': [sqft],
+        'WR': [wr],
+        'Age Numeric': [age],
+        'Type Category': [type_category],
+        'Family Room': [family_room],
+        'Garage Type': [garage_type],
+        'Garage Parking Spaces': [garage_parking_space]
+    })
+    
+    # Make prediction using the Toronto Region model
+    prediction = toronto_model.predict(input_data_toronto)
+    
+    # Find similar homes
+    features_toronto = ['Bedrooms Total', 'SqFt Numeric', 'WR', 'Age Numeric', 'Type Category', 'Family Room Category', 'Garage Type Category', 'Garage Parking Spaces']
+    input_features = np.array([bedrooms, sqft, wr, age, type_category, family_room, garage_type, garage_parking_space]).reshape(1, -1)
+    
+    df_toronto['distance'] = df_toronto[features_toronto].apply(lambda row: distance.euclidean(row, input_features[0]), axis=1)
+    similar_homes = df_toronto.nsmallest(3, 'distance')[['Address', 'Bedrooms Total', 'SqFt Numeric', 'WR', 'Age Numeric','Type', 'Sold Price']]
+    similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'Home Type', 'Sold Price']
+    similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
+    return render_template('toronto_index.html', prediction_text='Estimated House Price for Toronto Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+     
 
 if __name__ == "__main__":
     app.run(debug=True)
