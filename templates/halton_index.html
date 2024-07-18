@@ -133,6 +133,10 @@
         <div class="result text-center">
             <h2>{{ prediction_text }}</h2>
         </div>
+		<div class="result">
+            <h3>Similar Homes:</h3>
+            {{ similar_homes | safe }}
+        </div>
     </div>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

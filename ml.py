@@ -12,7 +12,7 @@ def load_dataframe(file_name):
     
 # Load the DataFrames
 df_peel = load_dataframe('Peel2024.xlsx')
-
+df_halton = load_dataframe('Halton.xlsx')
 app = Flask(__name__)
 
 # Load the Models for different datasets
@@ -70,7 +70,19 @@ def predict_halton():
     # Make prediction using the Halton Region model
     prediction = halton_model.predict(input_data_halton)
     
-    return render_template('halton_index.html', prediction_text='Estimated House Price for Halton Region: ${:,.2f}'.format(prediction[0]))
+    # Find similar homes
+    features_halton = ['Total Bedrooms', 'SqFt Numeric', 'WR', 'Age Numeric', 'City Category', 'Type Category']
+    input_features = np.array([bedrooms, sqft, wr, age, city, type_category]).reshape(1, -1)
+    
+    # Filter df_peel to include only homes in the same City Category as the input
+    df_halton_filtered = df_halton[df_halton['City Category'] == city]
+    df_halton_filtered['distance'] = df_halton_filtered[features_halton].apply(lambda row: distance.euclidean(row, input_features[0]), axis=1)
+    similar_homes = df_halton_filtered.nsmallest(3, 'distance')[['Address', 'Total Bedrooms', 'SqFt Numeric', 'WR', 'Age Numeric', 'city', 'Type', 'Sold Price']]
+    
+    similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price']
+    similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
+    
+    return render_template('halton_index.html', prediction_text='Estimated House Price for Halton Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
 
 # Define the prediction route for Peel Region
 @app.route('/predict_peel', methods=['POST'])
@@ -104,7 +116,7 @@ def predict_peel():
     df_peel_filtered = df_peel[df_peel['City Category'] == city]
     df_peel_filtered['distance'] = df_peel_filtered[features_peel].apply(lambda row: distance.euclidean(row, input_features[0]), axis=1)
     similar_homes = df_peel_filtered.nsmallest(3, 'distance')[['Address', 'Bedrooms Total', 'SqFt Numeric', 'WR', 'Age Numeric', 'City', 'Type', 'Sold Price']]
-    
+    similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
     return render_template('peel_index.html', prediction_text='Estimated House Price for Peel Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
     
