@@ -57,30 +57,30 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="bedrooms">Number of Bedrooms:</label>
-                    <input type="text" class="form-control" id="bedrooms" name="bedrooms" required>
+                    <input type="text" class="form-control" id="bedrooms" name="bedrooms" value="{{ request.form.bedrooms }}" required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="sqft">Square Footage:</label>
-                    <input type="text" class="form-control" id="sqft" name="sqft" required>
+                    <input type="text" class="form-control" id="sqft" name="sqft" value="{{ request.form.sqft }}" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="wr">Number of Washrooms:</label>
-                    <input type="text" class="form-control" id="wr" name="wr" required>
+                    <input type="text" class="form-control" id="wr" name="wr" value="{{ request.form.wr }}" required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="age">Age of Property in Years:</label>
-                    <input type="text" class="form-control" id="age" name="age" required>
+                    <input type="text" class="form-control" id="age" name="age" value="{{ request.form.age }}" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="city">City:</label>
                     <select id="city" name="city" class="form-control" required>
-                        <option value="0">Brampton</option>
-                        <option value="1">Caledon</option>
-                        <option value="2">Mississauga</option>
+                        <option value="0" {% if request.form.city == '0' %}selected{% endif %}>Brampton</option>
+                        <option value="1" {% if request.form.city == '1' %}selected{% endif %}>Caledon</option>
+                        <option value="2" {% if request.form.city == '2' %}selected{% endif %}>Mississauga</option>
                     </select>
                 </div>
             </div>
@@ -88,26 +88,26 @@
                 <div class="form-group col-md-6">
                     <label for="type">Type of Home:</label>
                     <select id="type" name="type" class="form-control" required>
-                        <option value="0">Detached</option>
-                        <option value="1">Detached 1 1/2 Storey</option>
-                        <option value="2">Detached 2 1/2 Storey</option>
-                        <option value="3">Detached 2-Storey</option>
-                        <option value="4">Detached 3-Storey</option>
-                        <option value="5">Detached Backsplit 2</option>
-                        <option value="6">Detached Backsplit 3</option>
-                        <option value="7">Detached Backsplit 4</option>
-                        <option value="8">Detached Backsplit 5</option>
-                        <option value="9">Detached Backsplit 6</option>
-                        <option value="10">Detached Bungaloft</option>
-                        <option value="11">Detached Bungalow</option>
-                        <option value="12">Detached Bungalow-Raised</option>
-                        <option value="13">Detached Other</option>
-                        <option value="14">Detached Sidesplit 1</option>
-                        <option value="15">Detached Sidesplit 2</option>
-                        <option value="16">Detached Sidesplit 3</option>
-                        <option value="17">Detached Sidesplit 4</option>
-                        <option value="18">Detached Sidesplit 5</option>
-                        <option value="19">Detached Sidesplit 6</option>
+                        <option value="0" {% if request.form.type == '0' %}selected{% endif %}>Detached</option>
+                        <option value="1" {% if request.form.type == '1' %}selected{% endif %}>Detached 1 1/2 Storey</option>
+                        <option value="2" {% if request.form.type == '2' %}selected{% endif %}>Detached 2 1/2 Storey</option>
+                        <option value="3" {% if request.form.type == '3' %}selected{% endif %}>Detached 2-Storey</option>
+                        <option value="4" {% if request.form.type == '4' %}selected{% endif %}>Detached 3-Storey</option>
+                        <option value="5" {% if request.form.type == '5' %}selected{% endif %}>Detached Backsplit 2</option>
+                        <option value="6" {% if request.form.type == '6' %}selected{% endif %}>Detached Backsplit 3</option>
+                        <option value="7" {% if request.form.type == '7' %}selected{% endif %}>Detached Backsplit 4</option>
+                        <option value="8" {% if request.form.type == '8' %}selected{% endif %}>Detached Backsplit 5</option>
+                        <option value="9" {% if request.form.type == '9' %}selected{% endif %}>Detached Backsplit 6</option>
+                        <option value="10" {% if request.form.type == '10' %}selected{% endif %}>Detached Bungaloft</option>
+                        <option value="11" {% if request.form.type == '11' %}selected{% endif %}>Detached Bungalow</option>
+                        <option value="12" {% if request.form.type == '12' %}selected{% endif %}>Detached Bungalow-Raised</option>
+                        <option value="13" {% if request.form.type == '13' %}selected{% endif %}>Detached Other</option>
+                        <option value="14" {% if request.form.type == '14' %}selected{% endif %}>Detached Sidesplit 1</option>
+                        <option value="15" {% if request.form.type == '15' %}selected{% endif %}>Detached Sidesplit 2</option>
+                        <option value="16" {% if request.form.type == '16' %}selected{% endif %}>Detached Sidesplit 3</option>
+                        <option value="17" {% if request.form.type == '17' %}selected{% endif %}>Detached Sidesplit 4</option>
+                        <option value="18" {% if request.form.type == '18' %}selected{% endif %}>Detached Sidesplit 5</option>
+                        <option value="19" {% if request.form.type == '19' %}selected{% endif %}>Detached Sidesplit 6</option>
                     </select>
                 </div>
             </div>
@@ -117,6 +117,10 @@
         </form>
         <div class="result text-center">
             <h2>{{ prediction_text }}</h2>
+        </div>
+        <div class="result">
+            <h3>Similar Homes:</h3>
+            {{ similar_homes | safe }}
         </div>
     </div>
     <!-- Bootstrap JS and dependencies -->
