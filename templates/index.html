@@ -52,6 +52,7 @@
                     <option value="halton">Halton Region</option>
                     <option value="peel">Peel Region</option>
 					<option value="toronto">Toronto Region</option>
+					<option value="durham">Durham Region</option>
                 </select>
             </div>
             <div class="text-center">
@@ -72,7 +73,9 @@
                 window.location.href = '/peel_index';
             } else if (region === 'toronto') {
                 window.location.href = '/toronto_index';
-            }
+            } else if (region == 'durham'){
+			    window.location.href = '/durham_index';
+			}
         });
     </script>
 </body>

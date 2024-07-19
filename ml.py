@@ -14,12 +14,15 @@ def load_dataframe(file_name):
 df_peel = load_dataframe('Peel2024.xlsx')
 df_halton = load_dataframe('Halton.xlsx')
 df_toronto = load_dataframe('Toronto2024.xlsx')
+df_durham = load_dataframe('Durham2024.xlsx')
+
 app = Flask(__name__)
 
 # Load the Models for different datasets
-halton_model = load('Models/Halton_RFM.pkl')
-peel_model = load('Models/Peel_RFM.pkl')
-toronto_model = load('Models/Toronto_RFM.pkl')
+halton_model = load('Models/Halton_rfm.pkl')
+peel_model = load('Models/Peel_rfm.pkl')
+toronto_model = load('Models/Toronto_rfm.pkl')
+durham_model = load('Models/Durham_rfm.pkl')
 
 # Define the home page route
 @app.route('/')
@@ -37,6 +40,10 @@ def peel_index():
 @app.route('/toronto_index')
 def toronto_index():
     return render_template('toronto_index.html')
+
+@app.route('/durham_index')
+def durham_index():
+    return render_template('durham_index.html')
     
 # Define the prediction route for Halton Region
 @app.route('/predict_halton', methods=['POST'])
@@ -163,7 +170,51 @@ def predict_toronto():
     similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'Home Type', 'Sold Price']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
     return render_template('toronto_index.html', prediction_text='Estimated House Price for Toronto Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
-     
+
+# Define the prediction route for Durham Region
+@app.route('/predict_durham', methods=['POST'])
+def predict_durham():
+    # Get the input features from the form and convert to float
+    bedrooms = float(request.form['bedrooms'])
+    sqft = float(request.form['sqft'])
+    city = float(request.form['city'])
+    wr = float(request.form['wr'])
+    age = float(request.form['age'])
+    type_category = float(request.form['type'])
+    family_room = float(request.form['family room'])
+    garage_type = float(request.form['garage type'])
+    garage_parking_space = float(request.form['garage parking spaces'])
+    
+    # Create a DataFrame from the input data
+    input_data_durham = pd.DataFrame({
+        'Bedrooms Total': [bedrooms],
+        'SqFt Numeric': [sqft],
+        'City Category': [city],
+        'WR': [wr],
+        'Age Numeric': [age],
+        'Type Category': [type_category],
+        'Family Room': [family_room],
+        'Garage Type': [garage_type],
+        'Garage Parking Spaces': [garage_parking_space]
+    })
+    
+    # Make prediction using the Durham Region model
+    prediction = durham_model.predict(input_data_durham)
+    
+    # Find similar homes
+    features_durham = ['Bedrooms Total', 'SqFt Numeric', 'City Category', 'WR', 'Age Numeric', 'Type Category', 'Family Room Category', 'Garage Type Category', 'Garage Parking Spaces']
+    input_features = np.array([bedrooms, sqft, city, wr, age, type_category, family_room, garage_type, garage_parking_space]).reshape(1, -1)
+    
+    
+    #Filter df_durham to include only homes in the same City Category as the input
+    df_durham_filtered = df_durham[df_durham['City Category'] == city]
+    df_durham_filtered['distance'] = df_durham_filtered[features_durham].apply(lambda row: distance.euclidean(row, input_features[0]), axis=1)
+    similar_homes = df_durham_filtered.nsmallest(3, 'distance')[['Address', 'Bedrooms Total', 'SqFt Numeric', 'WR', 'Age Numeric', 'City', 'Type', 'Sold Price']]
+    similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price']
+    similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
+   
+    return render_template('durham_index.html', prediction_text='Estimated House Price for Durham Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+         
 
 if __name__ == "__main__":
     app.run(debug=True)
