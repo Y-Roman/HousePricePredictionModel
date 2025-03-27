@@ -101,7 +101,7 @@ def predict_halton():
     similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price', 'Sold Date']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
     
-    return render_template('halton_index.html', prediction_text='Estimated House Price for Halton Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+    return render_template('halton_index.html', prediction_text='Estimated House Price for Halton Region: ${:,.0f}'.format(prediction[0]), similar_homes=similar_homes_html)
 
 # Define the prediction route for Peel Region
 @app.route('/predict_peel', methods=['POST'])
@@ -137,7 +137,7 @@ def predict_peel():
     similar_homes = df_peel_filtered.nsmallest(3, 'distance')[['Address', 'Bedrooms Total', 'SqFt Numeric', 'WR', 'Age Numeric', 'City', 'Type', 'Sold Price']]
     similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
-    return render_template('peel_index.html', prediction_text='Estimated House Price for Peel Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+    return render_template('peel_index.html', prediction_text='Estimated House Price for Peel Region: ${:,.0f}'.format(prediction[0]), similar_homes=similar_homes_html)
 
 # Define the prediction route for Toronto Region
 @app.route('/predict_toronto', methods=['POST'])
@@ -175,7 +175,7 @@ def predict_toronto():
     similar_homes = df_toronto.nsmallest(3, 'distance')[['Address', 'Bedrooms Total', 'SqFt Numeric', 'WR', 'Age Numeric','Type', 'Sold Price']]
     similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'Home Type', 'Sold Price']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
-    return render_template('toronto_index.html', prediction_text='Estimated House Price for Toronto Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+    return render_template('toronto_index.html', prediction_text='Estimated House Price for Toronto Region: ${:,.0f}'.format(prediction[0]), similar_homes=similar_homes_html)
 
 # Define the prediction route for Durham Region
 @app.route('/predict_durham', methods=['POST'])
@@ -219,7 +219,7 @@ def predict_durham():
     similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'City', 'Home Type', 'Sold Price']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
    
-    return render_template('durham_index.html', prediction_text='Estimated House Price for Durham Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+    return render_template('durham_index.html', prediction_text='Estimated House Price for Durham Region: ${:,.0f}'.format(prediction[0]), similar_homes=similar_homes_html)
 
 # Define the prediction route for Hamilton Region
 @app.route('/predict_hamilton', methods=['POST'])
@@ -257,7 +257,7 @@ def predict_hamilton():
     similar_homes = df_hamilton.nsmallest(3, 'distance')[['Address', 'Bedrooms Total', 'SqFt Numeric', 'WR', 'Age Numeric','Type', 'Sold Price']]
     similar_homes.columns = ['Address', 'Total Bedrooms', 'SqFt', 'Washrooms', 'Age', 'Home Type', 'Sold Price']
     similar_homes_html = similar_homes.to_html(classes='table table-striped', index=False)
-    return render_template('hamilton_index.html', prediction_text='Estimated House Price for hamilton Region: ${:,.2f}'.format(prediction[0]), similar_homes=similar_homes_html)
+    return render_template('hamilton_index.html', prediction_text='Estimated House Price for hamilton Region: ${:,.0f}'.format(prediction[0]), similar_homes=similar_homes_html)
 
 if __name__ == "__main__":
     app.run(debug=True)
